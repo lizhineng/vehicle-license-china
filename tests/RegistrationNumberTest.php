@@ -30,6 +30,26 @@ final class RegistrationNumberTest extends TestCase
         RegistrationNumber::make($registrationNumber);
     }
 
+    public function test_is_clean_energy_determines_if_vehicle_is_clean_energy(): void
+    {
+        $this->assertTrue(RegistrationNumber::make('粤ED12345')->isCleanEnergy());
+        $this->assertFalse(RegistrationNumber::make('粤ED1234')->isCleanEnergy());
+    }
+
+    public function test_is_battery_electric_determines_if_vehicle_is_a_fully_electric_vehicle(): void
+    {
+        $this->assertTrue(RegistrationNumber::make('粤ED12345')->isBatteryElectric());
+        $this->assertTrue(RegistrationNumber::make('粤EA12345')->isBatteryElectric());
+        $this->assertTrue(RegistrationNumber::make('粤EB12345')->isBatteryElectric());
+        $this->assertTrue(RegistrationNumber::make('粤EC12345')->isBatteryElectric());
+        $this->assertTrue(RegistrationNumber::make('粤EE12345')->isBatteryElectric());
+        $this->assertFalse(RegistrationNumber::make('粤EF12345')->isBatteryElectric());
+        $this->assertFalse(RegistrationNumber::make('粤EG12345')->isBatteryElectric());
+        $this->assertFalse(RegistrationNumber::make('粤EH12345')->isBatteryElectric());
+        $this->assertFalse(RegistrationNumber::make('粤EJ12345')->isBatteryElectric());
+        $this->assertFalse(RegistrationNumber::make('粤EK12345')->isBatteryElectric());
+    }
+
     /**
      * @return string[]
      */

@@ -134,10 +134,23 @@ final readonly class RegistrationNumber
         'F', 'G', 'H', 'J', 'K',
     ];
 
+    /**
+     * @var string[]
+     */
+    private const array BATTERY_ELECTRIC_LETTERS = [
+        'D', 'A', 'B', 'C', 'E',
+    ];
+
+    public string $region;
+
+    public string $authority;
+
+    public string $sequence;
+
     private function __construct(
         public string $registrationNumber
     ) {
-        //
+        $this->parse($registrationNumber);
     }
 
     public static function make(string $registrationNumber): static
@@ -249,5 +262,28 @@ final readonly class RegistrationNumber
         throw new RegistrationNumberException(sprintf(
             'The registration number "%s" is invalid.', $registrationNumber
         ));
+    }
+
+    private function parse(string $registrationNumber): void
+    {
+        $this->region = mb_substr($registrationNumber, 0, 1);
+        $this->authority = mb_substr($registrationNumber, 1, 1);
+        $this->sequence = mb_substr($registrationNumber, 2);
+    }
+
+    public function isCleanEnergy(): bool
+    {
+        return strlen($this->sequence) === 6;
+    }
+
+    public function isBatteryElectric(): bool
+    {
+        if (! $this->isCleanEnergy()) {
+            return false;
+        }
+
+        $code = mb_substr($this->sequence, 0, 1);
+
+        return in_array($code, self::BATTERY_ELECTRIC_LETTERS);
     }
 }

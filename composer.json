@@ -10,7 +10,7 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "Zhineng\\VehicleLicenseChina\\Tests": "tests/"
+            "Zhineng\\VehicleLicenseChina\\Tests\\": "tests/"
         }
     },
     "authors": [

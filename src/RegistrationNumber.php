@@ -224,6 +224,42 @@ final readonly class RegistrationNumber
     private static function checkSequenceForCleanEnergy(string $sequence): bool
     {
         $sequence = mb_strtoupper($sequence);
+
+        $last = mb_substr($sequence, -1);
+        $codepoint = mb_ord($last);
+
+        if (is_int($codepoint) && $codepoint >= ord('A') && $codepoint <= ord('Z')) {
+            return static::checkSequenceForLargeCleanEnergy($sequence);
+        }
+
+        return static::checkSequenceForSmallCleanEnergy($sequence);
+    }
+
+    private static function checkSequenceForLargeCleanEnergy(string $sequence): bool
+    {
+        $last = mb_substr($sequence, -1);
+
+        if (! in_array($last, self::CLEAN_ENERGY_FIRST_LETTERS)) {
+            return false;
+        }
+
+        for ($i = 0; $i < mb_strlen($sequence) - 1; $i++) {
+            $codepoint = mb_ord($sequence[$i]);
+
+            if ($codepoint === false) {
+                return false;
+            }
+
+            if ($codepoint < ord('0') || $codepoint > ord('9')) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    private static function checkSequenceForSmallCleanEnergy(string $sequence): bool
+    {
         $first = mb_substr($sequence, 0, 1);
 
         if (! in_array($first, self::CLEAN_ENERGY_FIRST_LETTERS)) {
@@ -276,14 +312,40 @@ final readonly class RegistrationNumber
         return strlen($this->sequence) === 6;
     }
 
-    public function isBatteryElectric(): bool
+    public function isSmallCleanEnergy(): bool
     {
         if (! $this->isCleanEnergy()) {
             return false;
         }
 
-        $code = mb_substr($this->sequence, 0, 1);
+        $first = mb_substr($this->sequence, 0, 1);
 
-        return in_array($code, self::BATTERY_ELECTRIC_LETTERS);
+        return in_array($first, self::CLEAN_ENERGY_FIRST_LETTERS, strict: true);
+    }
+
+    public function isLargeCleanEnergy(): bool
+    {
+        if (! $this->isCleanEnergy()) {
+            return false;
+        }
+
+        $last = mb_substr($this->sequence, -1);
+
+        return in_array($last, self::CLEAN_ENERGY_FIRST_LETTERS, strict: true);
+    }
+
+    public function isBatteryElectric(): bool
+    {
+        $letter = match (true) {
+            $this->isSmallCleanEnergy() => mb_substr($this->sequence, 0, 1),
+            $this->isLargeCleanEnergy() => mb_substr($this->sequence, -1),
+            default => false,
+        };
+
+        if ($letter === false) {
+            return false;
+        }
+
+        return in_array($letter, self::BATTERY_ELECTRIC_LETTERS, strict: true);
     }
 }

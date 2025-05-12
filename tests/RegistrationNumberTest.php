@@ -15,6 +15,7 @@ final class RegistrationNumberTest extends TestCase
 {
     #[DataProvider('provide_valid_registration_numbers')]
     #[DataProvider('provide_valid_clean_energy_registration_numbers')]
+    #[DataProvider('provide_valid_large_clean_energy_vehicle_registration_numbers')]
     public function test_valid_registration_number(string $registrationNumber): void
     {
         $instance = RegistrationNumber::make($registrationNumber);
@@ -23,6 +24,7 @@ final class RegistrationNumberTest extends TestCase
 
     #[DataProvider('provide_invalid_registration_numbers')]
     #[DataProvider('provide_invalid_clean_energy_registration_numbers')]
+    #[DataProvider('provide_invalid_large_clean_energy_vehicle_registration_numbers')]
     public function test_invalid_registration_number(string $registrationNumber): void
     {
         $this->expectException(RegistrationNumberException::class);
@@ -36,18 +38,72 @@ final class RegistrationNumberTest extends TestCase
         $this->assertFalse(RegistrationNumber::make('粤ED1234')->isCleanEnergy());
     }
 
-    public function test_is_battery_electric_determines_if_vehicle_is_a_fully_electric_vehicle(): void
+    public function test_is_battery_electric_determines_if_small_vehicle_is_a_fully_electric_vehicle(): void
     {
         $this->assertTrue(RegistrationNumber::make('粤ED12345')->isBatteryElectric());
         $this->assertTrue(RegistrationNumber::make('粤EA12345')->isBatteryElectric());
         $this->assertTrue(RegistrationNumber::make('粤EB12345')->isBatteryElectric());
         $this->assertTrue(RegistrationNumber::make('粤EC12345')->isBatteryElectric());
         $this->assertTrue(RegistrationNumber::make('粤EE12345')->isBatteryElectric());
+
         $this->assertFalse(RegistrationNumber::make('粤EF12345')->isBatteryElectric());
         $this->assertFalse(RegistrationNumber::make('粤EG12345')->isBatteryElectric());
         $this->assertFalse(RegistrationNumber::make('粤EH12345')->isBatteryElectric());
         $this->assertFalse(RegistrationNumber::make('粤EJ12345')->isBatteryElectric());
         $this->assertFalse(RegistrationNumber::make('粤EK12345')->isBatteryElectric());
+    }
+
+    public function test_is_battery_electric_determines_if_large_vehicle_is_a_fully_electric_vehicle(): void
+    {
+        $this->assertTrue(RegistrationNumber::make('粤E12345D')->isBatteryElectric());
+        $this->assertTrue(RegistrationNumber::make('粤E12345A')->isBatteryElectric());
+        $this->assertTrue(RegistrationNumber::make('粤E12345B')->isBatteryElectric());
+        $this->assertTrue(RegistrationNumber::make('粤E12345C')->isBatteryElectric());
+        $this->assertTrue(RegistrationNumber::make('粤E12345E')->isBatteryElectric());
+
+        $this->assertFalse(RegistrationNumber::make('粤E12345F')->isBatteryElectric());
+        $this->assertFalse(RegistrationNumber::make('粤E12345G')->isBatteryElectric());
+        $this->assertFalse(RegistrationNumber::make('粤E12345H')->isBatteryElectric());
+        $this->assertFalse(RegistrationNumber::make('粤E12345J')->isBatteryElectric());
+        $this->assertFalse(RegistrationNumber::make('粤E12345K')->isBatteryElectric());
+    }
+
+    public function test_is_small_clean_energy_determines_if_vehicle_is_small_vehicle_with_clean_energy(): void
+    {
+        $this->assertTrue(RegistrationNumber::make('粤ED12345')->isSmallCleanEnergy());
+        $this->assertTrue(RegistrationNumber::make('粤EA12345')->isSmallCleanEnergy());
+        $this->assertTrue(RegistrationNumber::make('粤EB12345')->isSmallCleanEnergy());
+        $this->assertTrue(RegistrationNumber::make('粤EC12345')->isSmallCleanEnergy());
+        $this->assertTrue(RegistrationNumber::make('粤EE12345')->isSmallCleanEnergy());
+        $this->assertTrue(RegistrationNumber::make('粤EF12345')->isSmallCleanEnergy());
+        $this->assertTrue(RegistrationNumber::make('粤EG12345')->isSmallCleanEnergy());
+
+        $this->assertFalse(RegistrationNumber::make('粤E12345D')->isSmallCleanEnergy());
+        $this->assertFalse(RegistrationNumber::make('粤E12345A')->isSmallCleanEnergy());
+        $this->assertFalse(RegistrationNumber::make('粤E12345B')->isSmallCleanEnergy());
+        $this->assertFalse(RegistrationNumber::make('粤E12345C')->isSmallCleanEnergy());
+        $this->assertFalse(RegistrationNumber::make('粤E12345E')->isSmallCleanEnergy());
+        $this->assertFalse(RegistrationNumber::make('粤E12345F')->isSmallCleanEnergy());
+        $this->assertFalse(RegistrationNumber::make('粤E12345G')->isSmallCleanEnergy());
+    }
+
+    public function test_is_large_clean_energy_determines_if_vehicle_is_large_vehicle_with_clean_energy(): void
+    {
+        $this->assertTrue(RegistrationNumber::make('粤E12345D')->isLargeCleanEnergy());
+        $this->assertTrue(RegistrationNumber::make('粤E12345A')->isLargeCleanEnergy());
+        $this->assertTrue(RegistrationNumber::make('粤E12345B')->isLargeCleanEnergy());
+        $this->assertTrue(RegistrationNumber::make('粤E12345C')->isLargeCleanEnergy());
+        $this->assertTrue(RegistrationNumber::make('粤E12345E')->isLargeCleanEnergy());
+        $this->assertTrue(RegistrationNumber::make('粤E12345F')->isLargeCleanEnergy());
+        $this->assertTrue(RegistrationNumber::make('粤E12345G')->isLargeCleanEnergy());
+
+        $this->assertFalse(RegistrationNumber::make('粤ED12345')->isLargeCleanEnergy());
+        $this->assertFalse(RegistrationNumber::make('粤EA12345')->isLargeCleanEnergy());
+        $this->assertFalse(RegistrationNumber::make('粤EB12345')->isLargeCleanEnergy());
+        $this->assertFalse(RegistrationNumber::make('粤EC12345')->isLargeCleanEnergy());
+        $this->assertFalse(RegistrationNumber::make('粤EE12345')->isLargeCleanEnergy());
+        $this->assertFalse(RegistrationNumber::make('粤EF12345')->isLargeCleanEnergy());
+        $this->assertFalse(RegistrationNumber::make('粤EG12345')->isLargeCleanEnergy());
     }
 
     /**
@@ -86,7 +142,7 @@ final class RegistrationNumberTest extends TestCase
     }
 
     /**
-     * @return string[]
+     * @return string[][]
      */
     public static function provide_valid_clean_energy_registration_numbers(): array
     {
@@ -102,6 +158,28 @@ final class RegistrationNumberTest extends TestCase
 
             // Authority code "W" (the 2nd character) is for internal in Shandong province
             ['鲁WD12345'],
+        ];
+    }
+
+    /**
+     * @return string[][]
+     */
+    public static function provide_valid_large_clean_energy_vehicle_registration_numbers(): array
+    {
+        return [
+            // Battery electric vehicle
+            ['粤E12345D'],
+            ['粤E12345A'],
+            ['粤E12345B'],
+            ['粤E12345C'],
+            ['粤E12345E'],
+
+            // Non-battery electric vehicle
+            ['粤E12345F'],
+            ['粤E12345G'],
+            ['粤E12345H'],
+            ['粤E12345J'],
+            ['粤E12345K'],
         ];
     }
 
@@ -156,6 +234,20 @@ final class RegistrationNumberTest extends TestCase
             // Sequence could not contain "O" or "I"
             ['粤EDO1234'],
             ['粤EDI1234'],
+        ];
+    }
+
+    /**
+     * @return string[][]
+     */
+    public static function provide_invalid_large_clean_energy_vehicle_registration_numbers(): array
+    {
+        return [
+            ['粤E1234DD'],
+            ['粤E123D4D'],
+            ['粤E12D34D'],
+            ['粤E1D234D'],
+            ['粤ED1234D'],
         ];
     }
 }

@@ -17,6 +17,8 @@ final class RegistrationNumberTest extends TestCase
     #[DataProvider('provide_valid_clean_energy_registration_numbers')]
     #[DataProvider('provide_valid_large_clean_energy_vehicle_registration_numbers')]
     #[DataProvider('provide_valid_special_registration_numbers')]
+    #[DataProvider('provide_valid_embassy_registration_numbers')]
+    #[DataProvider('provide_valid_consulate_registration_numbers')]
     public function test_valid_registration_number(string $registrationNumber): void
     {
         $instance = RegistrationNumber::make($registrationNumber);
@@ -27,6 +29,8 @@ final class RegistrationNumberTest extends TestCase
     #[DataProvider('provide_invalid_clean_energy_registration_numbers')]
     #[DataProvider('provide_invalid_large_clean_energy_vehicle_registration_numbers')]
     #[DataProvider('provide_invalid_special_registration_numbers')]
+    #[DataProvider('provide_invalid_embassy_registration_numbers')]
+    #[DataProvider('provide_invalid_consulate_registration_numbers')]
     public function test_invalid_registration_number(string $registrationNumber): void
     {
         $this->expectException(RegistrationNumberException::class);
@@ -285,6 +289,59 @@ final class RegistrationNumberTest extends TestCase
             ['粤E0006假'],
             ['粤E0006港'],
             ['粤E0000澳'],
+        ];
+    }
+
+    /**
+     * @return string[][]
+     */
+    public static function provide_valid_embassy_registration_numbers(): array
+    {
+        return [
+            ['224578使'],
+        ];
+    }
+
+    /**
+     * @return string[][]
+     */
+    public static function provide_invalid_embassy_registration_numbers(): array
+    {
+        return [
+            ['22A578使'],
+            ['224A78使'],
+            ['2245A8使'],
+            ['22457A使'],
+            ['0224578使'],
+            ['224578使使'],
+        ];
+    }
+
+    /**
+     * @return string[][]
+     */
+    public static function provide_valid_consulate_registration_numbers(): array
+    {
+        return [
+            ['沪22478领'],
+            ['沪2247A领'],
+        ];
+    }
+
+    /**
+     * @return string[][]
+     */
+    public static function provide_invalid_consulate_registration_numbers(): array
+    {
+        return [
+            ['假22478领'],
+            ['沪22-78领'],
+            ['沪224A8领'],
+            ['沪224O8领'],
+            ['沪2247O领'],
+            ['沪2247I领'],
+            ['沪022478领'],
+            ['沪22478领领'],
         ];
     }
 }

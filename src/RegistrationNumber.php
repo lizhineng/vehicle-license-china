@@ -159,6 +159,10 @@ final readonly class RegistrationNumber
 
     private const string GUANGDONG_SPECIAL_AUTHORITY = 'Z';
 
+    private const string EMBASSY_SUFFIX = '使';
+
+    private const string CONSULATE_SUFFIX = '领';
+
     public string $region;
 
     public string $authority;
@@ -173,6 +177,90 @@ final readonly class RegistrationNumber
 
     public static function make(string $registrationNumber): static
     {
+        static::validate($registrationNumber);
+
+        return new self($registrationNumber);
+    }
+
+    private static function validate(string $registrationNumber): void
+    {
+        $registrationNumber = mb_strtoupper($registrationNumber);
+        $last = mb_substr($registrationNumber, -1);
+
+        match ($last) {
+            self::EMBASSY_SUFFIX => static::validateEmbassyRegistrationNumber($registrationNumber),
+            self::CONSULATE_SUFFIX => static::validateConsulateRegistrationNumber($registrationNumber),
+            default => static::validateRegistrationNumber($registrationNumber),
+        };
+    }
+
+    private static function validateEmbassyRegistrationNumber(string $registrationNumber): void
+    {
+        if (! static::checkEmbassyRegistrationNumberLength($registrationNumber)) {
+            static::notValid($registrationNumber);
+        }
+
+        [$agencyNumber, $sequence, $suffix] = static::extractEmbassyComponents($registrationNumber);
+
+        if (! static::checkAgencyNumber($agencyNumber)) {
+            static::notValid($registrationNumber);
+        }
+
+        if (! static::checkEmbassySequence($sequence)) {
+            static::notValid($registrationNumber);
+        }
+
+        if ($suffix !== self::EMBASSY_SUFFIX) {
+            static::notValid($registrationNumber);
+        }
+    }
+
+    private static function validateConsulateRegistrationNumber(string $registrationNumber): void
+    {
+        if (! static::checkConsulateRegistrationNumberLength($registrationNumber)) {
+            static::notValid($registrationNumber);
+        }
+
+        [$region, $agencyNumber, $sequence, $suffix] = static::extractConsulateComponents($registrationNumber);
+
+        if (! isset(self::AUTHORITIES[$region])) {
+            static::notValid($registrationNumber);
+        }
+
+        if (! static::checkAgencyNumber($agencyNumber)) {
+            static::notValid($registrationNumber);
+        }
+
+        if (! static::checkConsulateSequence($sequence)) {
+            static::notValid($registrationNumber);
+        }
+
+        if ($suffix !== self::CONSULATE_SUFFIX) {
+            static::notValid($registrationNumber);
+        }
+    }
+
+    private static function checkEmbassyRegistrationNumberLength(string $registrationNumber): bool
+    {
+        $agencyNumber = 3;
+        $sequence = 3;
+        $suffix = 1;
+
+        return mb_strlen($registrationNumber) === $agencyNumber + $sequence + $suffix;
+    }
+
+    private static function checkConsulateRegistrationNumberLength(string $registrationNumber): bool
+    {
+        $region = 1;
+        $agencyNumber = 3;
+        $sequence = 2;
+        $suffix = 1;
+
+        return mb_strlen($registrationNumber) === $region + $agencyNumber + $sequence + $suffix;
+    }
+
+    private static function validateRegistrationNumber(string $registrationNumber): void
+    {
         [$region, $authority, $sequence, $suffix] = static::extractComponents($registrationNumber);
 
         if (! static::checkAuthority($region, $authority)) {
@@ -186,8 +274,31 @@ final readonly class RegistrationNumber
         if (! static::checkSuffix($region, $authority, $sequence, $suffix)) {
             static::notValid($registrationNumber);
         }
+    }
 
-        return new self($registrationNumber);
+    /**
+     * @return string[]
+     */
+    private static function extractEmbassyComponents(string $registrationNumber): array
+    {
+        $agency = mb_substr($registrationNumber, 0, 3);
+        $sequence = mb_substr($registrationNumber, 3, 3);
+        $suffix = mb_substr($registrationNumber, 6, 1);
+
+        return [$agency, $sequence, $suffix];
+    }
+
+    /**
+     * @return string[]
+     */
+    private static function extractConsulateComponents(string $registrationNumber): array
+    {
+        $region = mb_substr($registrationNumber, 0, 1);
+        $agencyNumber = mb_substr($registrationNumber, 1, 3);
+        $sequence = mb_substr($registrationNumber, 4, 2);
+        $suffix = mb_substr($registrationNumber, 6, 1);
+
+        return [$region, $agencyNumber, $sequence, $suffix];
     }
 
     /**
@@ -195,24 +306,27 @@ final readonly class RegistrationNumber
      */
     private static function extractComponents(string $registrationNumber): array
     {
-        $normalized = mb_strtoupper($registrationNumber);
+        $region = mb_substr($registrationNumber, 0, 1);
+        $authority = mb_substr($registrationNumber, 1, 1);
 
-        $region = mb_substr($normalized, 0, 1);
-        $authority = mb_substr($normalized, 1, 1);
-
-        $last = mb_substr($normalized, -1);
+        $last = mb_substr($registrationNumber, -1);
 
         $suffix = in_array($last, self::SPECIAL_SUFFIXS, strict: true)
             ? $last
             : '';
 
         $sequence = $suffix === ''
-            ? mb_substr($normalized, 2)
-            : mb_substr($normalized, 2, -1);
+            ? mb_substr($registrationNumber, 2)
+            : mb_substr($registrationNumber, 2, -1);
 
         return [
             $region, $authority, $sequence, $suffix,
         ];
+    }
+
+    private static function checkAgencyNumber(string $agencyNumber): bool
+    {
+        return preg_match('/^\d{3}$/', $agencyNumber) === 1;
     }
 
     private static function checkAuthority(string $region, string $authority): bool
@@ -254,6 +368,35 @@ final readonly class RegistrationNumber
         }
 
         return true;
+    }
+
+    private static function checkEmbassySequence(string $sequence): bool
+    {
+        return preg_match('/^\d{3}$/', $sequence) === 1;
+    }
+
+    private static function checkConsulateSequence(string $sequence): bool
+    {
+        $len = mb_strlen($sequence);
+
+        if ($len !== 2) {
+            return false;
+        }
+
+        $first = mb_ord($sequence[0]);
+        $last = mb_ord($sequence[1]);
+
+        if ($first >= ord('0') && $first <= ord('9')
+            && $last >= ord('0') && $last <= ord('9')) {
+            return true;
+        }
+
+        if ($first >= ord('0') && $first <= ord('9')
+            && $last >= ord('A') && $last <= ord('Z')) {
+            return $last !== ord('O') && $last !== ord('I');
+        }
+
+        return false;
     }
 
     private static function checkSequenceForGeneral(string $sequence): bool

@@ -141,6 +141,24 @@ final readonly class RegistrationNumber
         'D', 'A', 'B', 'C', 'E',
     ];
 
+    /**
+     * @var string[]
+     */
+    private const array SPECIAL_SUFFIXS = [
+        '领', '使', '警', '学', '挂', '港', '澳', '试', '超',
+    ];
+
+    /**
+     * @var string[]
+     */
+    private const array GUANGDONG_Z_SPECIAL_SUFFIXS = [
+        '港', '澳',
+    ];
+
+    private const string GUANGDONG_PROVINCE = '粤';
+
+    private const string GUANGDONG_SPECIAL_AUTHORITY = 'Z';
+
     public string $region;
 
     public string $authority;
@@ -155,45 +173,87 @@ final readonly class RegistrationNumber
 
     public static function make(string $registrationNumber): static
     {
-        static::validateAuthority($registrationNumber);
-        static::validateSequence($registrationNumber);
+        [$region, $authority, $sequence, $suffix] = static::extractComponents($registrationNumber);
+
+        if (! static::checkAuthority($region, $authority)) {
+            static::notValid($registrationNumber);
+        }
+
+        if (! static::checkSequence($sequence)) {
+            static::notValid($registrationNumber);
+        }
+
+        if (! static::checkSuffix($region, $authority, $sequence, $suffix)) {
+            static::notValid($registrationNumber);
+        }
 
         return new self($registrationNumber);
     }
 
-    private static function validateAuthority(string $registrationNumber): void
+    /**
+     * @return string[]
+     */
+    private static function extractComponents(string $registrationNumber): array
     {
-        $region = mb_substr($registrationNumber, 0, 1);
+        $normalized = mb_strtoupper($registrationNumber);
+
+        $region = mb_substr($normalized, 0, 1);
+        $authority = mb_substr($normalized, 1, 1);
+
+        $last = mb_substr($normalized, -1);
+
+        $suffix = in_array($last, self::SPECIAL_SUFFIXS, strict: true)
+            ? $last
+            : '';
+
+        $sequence = $suffix === ''
+            ? mb_substr($normalized, 2)
+            : mb_substr($normalized, 2, -1);
+
+        return [
+            $region, $authority, $sequence, $suffix,
+        ];
+    }
+
+    private static function checkAuthority(string $region, string $authority): bool
+    {
         $authorities = self::AUTHORITIES[$region] ?? [];
 
         if ($authorities === []) {
-            static::notValid($registrationNumber);
+            return false;
         }
 
-        $code = mb_substr($registrationNumber, 1, 1);
-
-        if ($code === 'O') {
-            return;
+        if ($authority === 'O') {
+            return true;
         }
 
-        if (! in_array($code, $authorities)) {
-            static::notValid($registrationNumber);
-        }
+        return in_array($authority, $authorities, strict: true);
     }
 
-    private static function validateSequence(string $registrationNumber): void
+    private static function checkSequence(string $sequence): bool
     {
-        $sequence = mb_strtoupper(mb_substr($registrationNumber, 2));
-
-        $valid = match (mb_strlen($sequence)) {
+        return match (mb_strlen($sequence)) {
             4, 5 => static::checkSequenceForGeneral($sequence),
             6 => static::checkSequenceForCleanEnergy($sequence),
-            default => static::notValid($registrationNumber),
+            default => false,
         };
+    }
 
-        if (! $valid) {
-            static::notValid($registrationNumber);
+    private static function checkSuffix(
+        string $region, string $authority, string $sequence, string $suffix
+    ): bool {
+        if (in_array($suffix, self::GUANGDONG_Z_SPECIAL_SUFFIXS, strict: true)) {
+            return $region === self::GUANGDONG_PROVINCE
+                && $authority === self::GUANGDONG_SPECIAL_AUTHORITY;
         }
+
+        if ($suffix !== '' && ! in_array($suffix, self::SPECIAL_SUFFIXS, strict: true)) {
+            $len = mb_strlen($sequence);
+
+            return $len >= 4 && $len <= 5;
+        }
+
+        return true;
     }
 
     private static function checkSequenceForGeneral(string $sequence): bool

@@ -16,6 +16,7 @@ final class RegistrationNumberTest extends TestCase
     #[DataProvider('provide_valid_registration_numbers')]
     #[DataProvider('provide_valid_clean_energy_registration_numbers')]
     #[DataProvider('provide_valid_large_clean_energy_vehicle_registration_numbers')]
+    #[DataProvider('provide_valid_special_registration_numbers')]
     public function test_valid_registration_number(string $registrationNumber): void
     {
         $instance = RegistrationNumber::make($registrationNumber);
@@ -25,6 +26,7 @@ final class RegistrationNumberTest extends TestCase
     #[DataProvider('provide_invalid_registration_numbers')]
     #[DataProvider('provide_invalid_clean_energy_registration_numbers')]
     #[DataProvider('provide_invalid_large_clean_energy_vehicle_registration_numbers')]
+    #[DataProvider('provide_invalid_special_registration_numbers')]
     public function test_invalid_registration_number(string $registrationNumber): void
     {
         $this->expectException(RegistrationNumberException::class);
@@ -248,6 +250,41 @@ final class RegistrationNumberTest extends TestCase
             ['粤E12D34D'],
             ['粤E1D234D'],
             ['粤ED1234D'],
+        ];
+    }
+
+    /**
+     * @return string[][]
+     */
+    public static function provide_valid_special_registration_numbers(): array
+    {
+        return [
+            ['京A0006警'],
+            ['京A00006警'],
+            ['粤E0000学'],
+            ['粤E00000学'],
+            ['粤E0000挂'],
+            ['粤E00000挂'],
+            ['粤Z0000港'],
+            ['粤Z00000港'],
+            ['粤Z0000澳'],
+            ['粤Z00000澳'],
+            ['粤Z0000试'],
+            ['粤Z00000试'],
+            ['粤Z0000超'],
+            ['粤Z00000超'],
+        ];
+    }
+
+    /**
+     * @return string[][]
+     */
+    public static function provide_invalid_special_registration_numbers(): array
+    {
+        return [
+            ['粤E0006假'],
+            ['粤E0006港'],
+            ['粤E0000澳'],
         ];
     }
 }

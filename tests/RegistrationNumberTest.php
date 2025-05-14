@@ -38,6 +38,96 @@ final class RegistrationNumberTest extends TestCase
         RegistrationNumber::make($registrationNumber);
     }
 
+    public function test_embassy_vehicle_registration_number(): void
+    {
+        $number = RegistrationNumber::make('224578使');
+        $this->assertSame('224', $number->agencyNumber);
+        $this->assertSame('578', $number->sequence);
+        $this->assertSame('使', $number->suffix);
+        $this->assertSame('', $number->region);
+        $this->assertSame('', $number->authority);
+    }
+
+    public function test_consulate_vehicle_registration_number(): void
+    {
+        $number = RegistrationNumber::make('沪22478领');
+        $this->assertSame('沪', $number->region);
+        $this->assertSame('224', $number->agencyNumber);
+        $this->assertSame('78', $number->sequence);
+        $this->assertSame('领', $number->suffix);
+        $this->assertSame('', $number->authority);
+    }
+
+    public function test_police_vehicle_registration_number(): void
+    {
+        $number = RegistrationNumber::make('京A0006警');
+        $this->assertSame('京', $number->region);
+        $this->assertSame('A', $number->authority);
+        $this->assertSame('0006', $number->sequence);
+        $this->assertSame('警', $number->suffix);
+        $this->assertSame('', $number->agencyNumber);
+    }
+
+    public function test_coach_vehicle_registration_number(): void
+    {
+        $number = RegistrationNumber::make('粤E12345学');
+        $this->assertSame('粤', $number->region);
+        $this->assertSame('E', $number->authority);
+        $this->assertSame('12345', $number->sequence);
+        $this->assertSame('学', $number->suffix);
+        $this->assertSame('', $number->agencyNumber);
+    }
+
+    public function test_trailer_registration_number(): void
+    {
+        $number = RegistrationNumber::make('粤E12345挂');
+        $this->assertSame('粤', $number->region);
+        $this->assertSame('E', $number->authority);
+        $this->assertSame('12345', $number->sequence);
+        $this->assertSame('挂', $number->suffix);
+        $this->assertSame('', $number->agencyNumber);
+    }
+
+    public function test_hong_kong_vehicle_registration_number(): void
+    {
+        $number = RegistrationNumber::make('粤Z1234港');
+        $this->assertSame('粤', $number->region);
+        $this->assertSame('Z', $number->authority);
+        $this->assertSame('1234', $number->sequence);
+        $this->assertSame('港', $number->suffix);
+        $this->assertSame('', $number->agencyNumber);
+    }
+
+    public function test_macau_vehicle_registration_number(): void
+    {
+        $number = RegistrationNumber::make('粤Z1234澳');
+        $this->assertSame('粤', $number->region);
+        $this->assertSame('Z', $number->authority);
+        $this->assertSame('1234', $number->sequence);
+        $this->assertSame('澳', $number->suffix);
+        $this->assertSame('', $number->agencyNumber);
+    }
+
+    public function test_test_vehicle_registration_number(): void
+    {
+        $number = RegistrationNumber::make('粤E12345试');
+        $this->assertSame('粤', $number->region);
+        $this->assertSame('E', $number->authority);
+        $this->assertSame('12345', $number->sequence);
+        $this->assertSame('试', $number->suffix);
+        $this->assertSame('', $number->agencyNumber);
+    }
+
+    public function test_special_vehicle_registration_number(): void
+    {
+        $number = RegistrationNumber::make('粤E12345超');
+        $this->assertSame('粤', $number->region);
+        $this->assertSame('E', $number->authority);
+        $this->assertSame('12345', $number->sequence);
+        $this->assertSame('超', $number->suffix);
+        $this->assertSame('', $number->agencyNumber);
+    }
+
     public function test_is_embassy_deteremins_if_registration_number_is_used_by_embassies(): void
     {
         $this->assertTrue(RegistrationNumber::make('224578使')->isEmbassy());

@@ -550,6 +550,9 @@ final readonly class RegistrationNumber
         $this->agencyNumber = $agency;
         $this->sequence = $sequence;
         $this->suffix = $suffix;
+
+        $this->region = '';
+        $this->authority = '';
     }
 
     private function parseConsulateRegistrationNumber(string $registrationNumber): void
@@ -560,6 +563,8 @@ final readonly class RegistrationNumber
         $this->agencyNumber = $agency;
         $this->sequence = $sequence;
         $this->suffix = $suffix;
+
+        $this->authority = '';
     }
 
     private function parseRegistrationNumber(string $registrationNumber): void
@@ -570,6 +575,8 @@ final readonly class RegistrationNumber
         $this->authority = $authority;
         $this->sequence = $sequence;
         $this->suffix = $suffix;
+
+        $this->agencyNumber = '';
     }
 
     public function isEmbassy(): bool

@@ -74,5 +74,5 @@ $registrationNumber->isBatteryElectric();
 
 The library is licensed under [the MIT license].
 
-[GA 36-2018](https://std.samr.gov.cn/hb/search/stdHBDetailed?id=8B1827F150C5BB19E05397BE0A0AB44A)
-[the MIT license](LICENSE.md)
+[GA 36-2018]: https://std.samr.gov.cn/hb/search/stdHBDetailed?id=8B1827F150C5BB19E05397BE0A0AB44A
+[the MIT license]: LICENSE.md

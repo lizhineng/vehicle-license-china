@@ -190,6 +190,8 @@ final class RegistrationNumberTest extends TestCase
     {
         $this->assertTrue(RegistrationNumber::make('粤ED12345')->isCleanEnergy());
         $this->assertFalse(RegistrationNumber::make('粤ED1234')->isCleanEnergy());
+        $this->assertFalse(RegistrationNumber::make('粤Z1234港')->isCleanEnergy());
+        $this->assertFalse(RegistrationNumber::make('224578使')->isCleanEnergy());
     }
 
     public function test_is_battery_electric_determines_if_small_vehicle_is_a_fully_electric_vehicle(): void

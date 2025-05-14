@@ -38,6 +38,64 @@ final class RegistrationNumberTest extends TestCase
         RegistrationNumber::make($registrationNumber);
     }
 
+    public function test_is_embassy_deteremins_if_registration_number_is_used_by_embassies(): void
+    {
+        $this->assertTrue(RegistrationNumber::make('224578使')->isEmbassy());
+        $this->assertFalse(RegistrationNumber::make('沪22478领')->isEmbassy());
+    }
+
+    public function test_is_consulate_determines_if_registration_number_is_used_by_consulates(): void
+    {
+        $this->assertTrue(RegistrationNumber::make('沪22478领')->isConsulate());
+        $this->assertFalse(RegistrationNumber::make('224578使')->isConsulate());
+    }
+
+    public function test_is_police_determines_if_registration_number_is_used_by_police_officers(): void
+    {
+        $this->assertTrue(RegistrationNumber::make('京A0006警')->isPolice());
+        $this->assertFalse(RegistrationNumber::make('粤E12345学')->isPolice());
+    }
+
+    public function test_is_coach_determines_if_registration_number_is_used_by_coaches(): void
+    {
+        $this->assertTrue(RegistrationNumber::make('粤E12345学')->isCoach());
+        $this->assertFalse(RegistrationNumber::make('粤E12345挂')->isCoach());
+    }
+
+    public function test_is_trailer_determines_if_registration_number_is_used_by_trailers(): void
+    {
+        $this->assertTrue(RegistrationNumber::make('粤E12345挂')->isTrailer());
+        $this->assertFalse(RegistrationNumber::make('粤E12345学')->isTrailer());
+    }
+
+    public function test_is_from_hong_kong_determines_if_registration_number_is_used_by_hong_kong_drivers(): void
+    {
+        $this->assertTrue(RegistrationNumber::make('粤Z1234港')->isFromHongKong());
+        $this->assertTrue(RegistrationNumber::make('粤Z12345港')->isFromHongKong());
+        $this->assertFalse(RegistrationNumber::make('粤Z1234澳')->isFromHongKong());
+        $this->assertFalse(RegistrationNumber::make('粤Z12345澳')->isFromHongKong());
+    }
+
+    public function test_is_from_macau_determines_if_registration_number_is_used_by_macau_drivers(): void
+    {
+        $this->assertTrue(RegistrationNumber::make('粤Z1234澳')->isFromMacau());
+        $this->assertTrue(RegistrationNumber::make('粤Z12345澳')->isFromMacau());
+        $this->assertFalse(RegistrationNumber::make('粤Z1234港')->isFromMacau());
+        $this->assertFalse(RegistrationNumber::make('粤Z12345港')->isFromMacau());
+    }
+
+    public function test_is_test_determines_if_registration_number_is_used_by_test_vehicles(): void
+    {
+        $this->assertTrue(RegistrationNumber::make('粤E12345试')->isTest());
+        $this->assertFalse(RegistrationNumber::make('粤E12345学')->isTest());
+    }
+
+    public function test_is_special_determines_if_registration_number_is_used_by_special_vehicles(): void
+    {
+        $this->assertTrue(RegistrationNumber::make('粤E12345超')->isSpecial());
+        $this->assertFalse(RegistrationNumber::make('粤E12345学')->isSpecial());
+    }
+
     public function test_is_clean_energy_determines_if_vehicle_is_clean_energy(): void
     {
         $this->assertTrue(RegistrationNumber::make('粤ED12345')->isCleanEnergy());

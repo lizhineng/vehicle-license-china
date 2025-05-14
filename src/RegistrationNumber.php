@@ -144,15 +144,24 @@ final readonly class RegistrationNumber
     /**
      * @var string[]
      */
-    private const array SPECIAL_SUFFIXS = [
-        '领', '使', '警', '学', '挂', '港', '澳', '试', '超',
+    private const array AVAILLABLE_SUFFIXS = [
+        self::EMBASSY_SUFFIX,
+        self::CONSULATE_SUFFIX,
+        self::POLICE_SUFFIX,
+        self::COACH_SUFFIX,
+        self::TRAILER_SUFFIX,
+        self::HONG_KONG_SUFFIX,
+        self::MACAU_SUFFIX,
+        self::TEST_SUFFIX,
+        self::SPECIAL_SUFFIX,
     ];
 
     /**
      * @var string[]
      */
     private const array GUANGDONG_Z_SPECIAL_SUFFIXS = [
-        '港', '澳',
+        self::HONG_KONG_SUFFIX,
+        self::MACAU_SUFFIX,
     ];
 
     private const string GUANGDONG_PROVINCE = '粤';
@@ -163,11 +172,29 @@ final readonly class RegistrationNumber
 
     private const string CONSULATE_SUFFIX = '领';
 
+    private const string POLICE_SUFFIX = '警';
+
+    private const string COACH_SUFFIX = '学';
+
+    private const string TRAILER_SUFFIX = '挂';
+
+    private const string HONG_KONG_SUFFIX = '港';
+
+    private const string MACAU_SUFFIX = '澳';
+
+    private const string TEST_SUFFIX = '试';
+
+    private const string SPECIAL_SUFFIX = '超';
+
     public string $region;
+
+    public string $agencyNumber;
 
     public string $authority;
 
     public string $sequence;
+
+    public string $suffix;
 
     private function __construct(
         public string $registrationNumber
@@ -311,7 +338,7 @@ final readonly class RegistrationNumber
 
         $last = mb_substr($registrationNumber, -1);
 
-        $suffix = in_array($last, self::SPECIAL_SUFFIXS, strict: true)
+        $suffix = in_array($last, self::AVAILLABLE_SUFFIXS, strict: true)
             ? $last
             : '';
 
@@ -361,7 +388,7 @@ final readonly class RegistrationNumber
                 && $authority === self::GUANGDONG_SPECIAL_AUTHORITY;
         }
 
-        if ($suffix !== '' && ! in_array($suffix, self::SPECIAL_SUFFIXS, strict: true)) {
+        if ($suffix !== '' && ! in_array($suffix, self::AVAILLABLE_SUFFIXS, strict: true)) {
             $len = mb_strlen($sequence);
 
             return $len >= 4 && $len <= 5;
@@ -505,9 +532,89 @@ final readonly class RegistrationNumber
 
     private function parse(string $registrationNumber): void
     {
-        $this->region = mb_substr($registrationNumber, 0, 1);
-        $this->authority = mb_substr($registrationNumber, 1, 1);
-        $this->sequence = mb_substr($registrationNumber, 2);
+        $registrationNumber = mb_strtoupper($registrationNumber);
+
+        $last = mb_substr($registrationNumber, -1);
+
+        match ($last) {
+            self::EMBASSY_SUFFIX => $this->parseEmbassyRegistrationNumber($registrationNumber),
+            self::CONSULATE_SUFFIX => $this->parseConsulateRegistrationNumber($registrationNumber),
+            default => $this->parseRegistrationNumber($registrationNumber),
+        };
+    }
+
+    private function parseEmbassyRegistrationNumber(string $registrationNumber): void
+    {
+        [$agency, $sequence, $suffix] = static::extractEmbassyComponents($registrationNumber);
+
+        $this->agencyNumber = $agency;
+        $this->sequence = $sequence;
+        $this->suffix = $suffix;
+    }
+
+    private function parseConsulateRegistrationNumber(string $registrationNumber): void
+    {
+        [$region, $agency, $sequence, $suffix] = static::extractConsulateComponents($registrationNumber);
+
+        $this->region = $region;
+        $this->agencyNumber = $agency;
+        $this->sequence = $sequence;
+        $this->suffix = $suffix;
+    }
+
+    private function parseRegistrationNumber(string $registrationNumber): void
+    {
+        [$region, $authority, $sequence, $suffix] = static::extractComponents($registrationNumber);
+
+        $this->region = $region;
+        $this->authority = $authority;
+        $this->sequence = $sequence;
+        $this->suffix = $suffix;
+    }
+
+    public function isEmbassy(): bool
+    {
+        return $this->suffix === self::EMBASSY_SUFFIX;
+    }
+
+    public function isConsulate(): bool
+    {
+        return $this->suffix === self::CONSULATE_SUFFIX;
+    }
+
+    public function isPolice(): bool
+    {
+        return $this->suffix === self::POLICE_SUFFIX;
+    }
+
+    public function isCoach(): bool
+    {
+        return $this->suffix === self::COACH_SUFFIX;
+    }
+
+    public function isTrailer(): bool
+    {
+        return $this->suffix === self::TRAILER_SUFFIX;
+    }
+
+    public function isFromHongKong(): bool
+    {
+        return $this->suffix === self::HONG_KONG_SUFFIX;
+    }
+
+    public function isFromMacau(): bool
+    {
+        return $this->suffix === self::MACAU_SUFFIX;
+    }
+
+    public function isTest(): bool
+    {
+        return $this->suffix === self::TEST_SUFFIX;
+    }
+
+    public function isSpecial(): bool
+    {
+        return $this->suffix === self::SPECIAL_SUFFIX;
     }
 
     public function isCleanEnergy(): bool

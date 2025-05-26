@@ -1,7 +1,7 @@
 # Vehicle license library for mainland China
 
-[![MIT License](https://img.shields.io/packagist/l/lizhineng/vehicle-license-china)](https://github.com/lizhineng/vehicle-license-china)
 [![Tests](https://github.com/lizhineng/vehicle-license-china/actions/workflows/test.yml/badge.svg)](https://github.com/lizhineng/vehicle-license-china/actions/workflows/test.yml)
+[![MIT License](https://img.shields.io/packagist/l/lizhineng/vehicle-license-china)](https://github.com/lizhineng/vehicle-license-china)
 [![Downloads](https://img.shields.io/packagist/dt/lizhineng/vehicle-license-china)](https://github.com/lizhineng/vehicle-license-china)
 
 The library implements the [GA 36-2018], which helps you validate the vehicle

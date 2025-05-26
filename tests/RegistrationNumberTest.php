@@ -443,6 +443,13 @@ final class RegistrationNumberTest extends TestCase
             ['粤Z00000试'],
             ['粤Z0000超'],
             ['粤Z00000超'],
+            ['粤ED12345警'],
+            ['粤ED12345学'],
+            ['粤ED12345挂'],
+            ['粤ZD12345港'],
+            ['粤ZD12345澳'],
+            ['粤ED12345试'],
+            ['粤ED12345超'],
         ];
     }
 

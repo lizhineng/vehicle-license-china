@@ -1,8 +1,8 @@
 # Vehicle license library for mainland China
 
-[![MIT License](https://img.shields.io/packagist/l/lizhineng/vehicle-license-china)](https://github.com/lizhineng/vehicle-license-china)
 [![Tests](https://github.com/lizhineng/vehicle-license-china/actions/workflows/test.yml/badge.svg)](https://github.com/lizhineng/vehicle-license-china/actions/workflows/test.yml)
-[![Downloads](https://img.shields.io/packagist/dt/lizhineng/vehicle-license-china)](https://github.com/lizhineng/vehicle-license-china/actions/workflows/test.yml)
+[![MIT License](https://img.shields.io/packagist/l/lizhineng/vehicle-license-china)](https://github.com/lizhineng/vehicle-license-china)
+[![Downloads](https://img.shields.io/packagist/dt/lizhineng/vehicle-license-china)](https://github.com/lizhineng/vehicle-license-china)
 
 The library implements the [GA 36-2018], which helps you validate the vehicle
 registration number issued in mainland China and extract the information
@@ -72,7 +72,7 @@ $registrationNumber->isBatteryElectric();
 
 ## License
 
-The library is licensed under [the MIT license].
+The library is released under [the MIT license].
 
 [GA 36-2018]: https://std.samr.gov.cn/hb/search/stdHBDetailed?id=8B1827F150C5BB19E05397BE0A0AB44A
 [the MIT license]: LICENSE.md

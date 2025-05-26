@@ -383,9 +383,16 @@ final readonly class RegistrationNumber
     private static function checkSuffix(
         string $region, string $authority, string $sequence, string $suffix
     ): bool {
+        // Ensure the HK or Macau suffix is only available to Guangdong-Z
         if (in_array($suffix, self::GUANGDONG_Z_SPECIAL_SUFFIXS, strict: true)) {
             return $region === self::GUANGDONG_PROVINCE
                 && $authority === self::GUANGDONG_SPECIAL_AUTHORITY;
+        }
+
+        // Ensure the Guangdong-Z license plate ends with either an "HK" or a "Macau" suffix
+        if ($region === self::GUANGDONG_PROVINCE
+            && $authority === self::GUANGDONG_SPECIAL_AUTHORITY) {
+            return in_array($suffix, self::GUANGDONG_Z_SPECIAL_SUFFIXS, strict: true);
         }
 
         if ($suffix !== '' && ! in_array($suffix, self::AVAILLABLE_SUFFIXS, strict: true)) {

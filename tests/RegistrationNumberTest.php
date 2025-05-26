@@ -290,7 +290,8 @@ final class RegistrationNumberTest extends TestCase
             ['粤O12345'],
 
             // Authority code "Z" (the 2nd character) is for internal in Guangdong province
-            ['粤Z12345'],
+            ['粤Z1234港'],
+            ['粤Z12345港'],
 
             // Authority code "W" (the 2nd character) is for internal in Shandong province
             ['鲁W12345'],
@@ -308,9 +309,6 @@ final class RegistrationNumberTest extends TestCase
 
             // Authority code "O" (the 2nd character) is for internal
             ['粤OD12345'],
-
-            // Authority code "Z" (the 2nd character) is for internal in Guangdong province
-            ['粤ZD12345'],
 
             // Authority code "W" (the 2nd character) is for internal in Shandong province
             ['鲁WD12345'],

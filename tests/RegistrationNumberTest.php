@@ -290,7 +290,8 @@ final class RegistrationNumberTest extends TestCase
             ['粤O12345'],
 
             // Authority code "Z" (the 2nd character) is for internal in Guangdong province
-            ['粤Z12345'],
+            ['粤Z1234港'],
+            ['粤Z12345港'],
 
             // Authority code "W" (the 2nd character) is for internal in Shandong province
             ['鲁W12345'],
@@ -308,9 +309,6 @@ final class RegistrationNumberTest extends TestCase
 
             // Authority code "O" (the 2nd character) is for internal
             ['粤OD12345'],
-
-            // Authority code "Z" (the 2nd character) is for internal in Guangdong province
-            ['粤ZD12345'],
 
             // Authority code "W" (the 2nd character) is for internal in Shandong province
             ['鲁WD12345'],
@@ -423,10 +421,6 @@ final class RegistrationNumberTest extends TestCase
             ['粤Z00000港'],
             ['粤Z0000澳'],
             ['粤Z00000澳'],
-            ['粤Z0000试'],
-            ['粤Z00000试'],
-            ['粤Z0000超'],
-            ['粤Z00000超'],
         ];
     }
 
@@ -439,6 +433,23 @@ final class RegistrationNumberTest extends TestCase
             ['粤E0006假'],
             ['粤E0006港'],
             ['粤E0000澳'],
+            ['粤Z0000警'],
+            ['粤Z00000警'],
+            ['粤Z0000学'],
+            ['粤Z00000学'],
+            ['粤Z0000挂'],
+            ['粤Z00000挂'],
+            ['粤Z0000试'],
+            ['粤Z00000试'],
+            ['粤Z0000超'],
+            ['粤Z00000超'],
+            ['粤ED12345警'],
+            ['粤ED12345学'],
+            ['粤ED12345挂'],
+            ['粤ZD12345港'],
+            ['粤ZD12345澳'],
+            ['粤ED12345试'],
+            ['粤ED12345超'],
         ];
     }
 
